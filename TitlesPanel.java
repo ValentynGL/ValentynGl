@@ -1,79 +1,79 @@
 /*
- * Декомпилированы с ЧФР 0_118.
+ * Decompiled with CFR 0_118.
  */
-импорт ява.авт.BasicStroke;
-импорт ява.авт.Измерения;
-импорт ява.авт.Графики;
-импорт ява.авт.Graphics2D;
-импорт ява.авт.Вставками;
-импорт ява.авт.Краска;
-импорт ява.авт.RenderingHints;
-импорт ява.авт.Формы;
-импорт ява.авт.Инсульт;
-импорт ява.авт.событие.Типа actionevent;
-импорт ява.авт.событие.Действие actionlistener;
-импорт ява.авт.геом.AffineTransform;
-импорт пакета javax.качели.Для jpanel;
-импорт пакета javax.качели.Таймер;
+import java.awt.BasicStroke;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
-общественный класс TitlesPanel
-расширяет jpanel у
-реализует actionlistener с {
-    Частная Graphics2D g2d;
-    Частная таймера анимации;
-    Частная логическое is_done = истина;
-    Частная инт start_angle = 0;
-    Частная инт формы;
+public class TitlesPanel
+extends JPanel
+implements ActionListener {
+    private Graphics2D g2d;
+    private Timer animation;
+    private boolean is_done = true;
+    private int start_angle = 0;
+    private int shape;
 
-    общественные TitlesPanel(инт _shape) {
-        это.форма = _shape;
-        это.анимация = новый Таймер(50, это);
-        это.анимация.setInitialDelay(50);
-        это.анимация.начать();
+    public TitlesPanel(int _shape) {
+        this.shape = _shape;
+        this.animation = new Timer(50, this);
+        this.animation.setInitialDelay(50);
+        this.animation.start();
     }
 
-    @Переопределить
-    публичного недействительными событий actionperformed(типа actionevent параметры arg0) {
-        если (это.is_done) {
-            это.перекрашивать();
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+        if (this.is_done) {
+            this.repaint();
         }
     }
 
-    частный аннулировать doDrawing(графики г) {
-        Это.is_done = ложь;
-        это.g2d = (Graphics2D)г;
-        этот.g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Измерение размера = это.getsize не();
-        вставки вставки = это.getInsets();
-        инт Вт = Размер.Ширина - вставками.слева - вставки.право;
-        инт ч = Размер.высота - вставками.топ - вставками.снизу;
-        ShapeFactory форма = новый ShapeFactory(это.форму);
-        это.g2d.setStroke(форма.инсульт);
-        этот.g2d.setPaint(форма.краски);
-        двойной угол = это.start_angle++;
-        если (это.start_angle > 360) {
-            это.start_angle = 0;
+    private void doDrawing(Graphics g) {
+        this.is_done = false;
+        this.g2d = (Graphics2D)g;
+        this.g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Dimension size = this.getSize();
+        Insets insets = this.getInsets();
+        int w = size.width - insets.left - insets.right;
+        int h = size.height - insets.top - insets.bottom;
+        ShapeFactory shape = new ShapeFactory(this.shape);
+        this.g2d.setStroke(shape.stroke);
+        this.g2d.setPaint(shape.paint);
+        double angle = this.start_angle++;
+        if (this.start_angle > 360) {
+            this.start_angle = 0;
         }
-        двойной др = 90.0 / ((двойной)Вт / ((двойной)формы.Ширина * 1.5));
-        инт Дж = форма.высота;
-        а (Дж < ч) {
-            Тип int я = форма.Ширина;
-            а (я < ш) {
- угол = угол > 360.0 ? 0.0 : угол + доктор;
-                AffineTransform преобразование = новый AffineTransform();
- преобразования.перевести(я, Дж);
- преобразования.поворот(Математика.toRadians(угол));
-                это.g2d.рисовать(трансформировать.createTransformedShape(форма.формы));
- я = (Тип int)((двухместная)я + (двойной)формы.Ширина * 1.5);
+        double dr = 90.0 / ((double)w / ((double)shape.width * 1.5));
+        int j = shape.height;
+        while (j < h) {
+            int i = shape.width;
+            while (i < w) {
+                angle = angle > 360.0 ? 0.0 : angle + dr;
+                AffineTransform transform = new AffineTransform();
+                transform.translate(i, j);
+                transform.rotate(Math.toRadians(angle));
+                this.g2d.draw(transform.createTransformedShape(shape.shape));
+                i = (int)((double)i + (double)shape.width * 1.5);
             }
- Дж = (Тип int)((двухместная)в J + (двойной)формы.высоте * 1.5);
+            j = (int)((double)j + (double)shape.height * 1.5);
         }
-        этот.is_done = истина;
+        this.is_done = true;
     }
 
-    @Переопределить
-    публичного недействительными paintComponent(графики г) {
-        супер.paintComponent(г);
-        этот.doDrawing(г);
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        this.doDrawing(g);
     }
 }
